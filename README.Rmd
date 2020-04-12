@@ -1,0 +1,89 @@
+---
+title: "Predicting Wages"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Goals 
+
+1. Predict  wages using various characteristics of workers 
+2. Assess the predictive performance using adjusted MSE and R^2, and out-of-sample MSE and R^2
+
+
+## Content of Repo
+
+1. data/codebook.rtf contains the description of worker job-relevant worker characteristics.
+2. data/pay.descrimination.Rdata: the CPS (2012) data on wages and job-relevant worker characteristics, suc as experience exp, gender, education, etc.
+3. predicting_wages.R predicts expected wage given worker characateristics using linear model with linear and quadratic specificaions. In addition, it evaluates the performance of the predictor by:
+4. r.squared and mean squared error, with and without sample splitting.
+
+
+## Data
+
+The data - pay.descrimination.Rdata comes from the March Supplement of the U.S. Current Population Survey, year 2012. We focus on the single (never married) workers with education levels equal to high-school, some college, or college graduates. The sample size is about 4,000.
+Our outcome variable Y is hourly wage, and our X ’s are various characteristics of workers such as gender, experience, education, and geographicalindicators.
+
+         female            cg               sc              hsg               mw               so               we        
+     Min.   :0.000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+     1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
+     Median :0.000   Median :0.0000   Median :0.0000   Median :0.0000   Median :0.0000   Median :0.0000   Median :0.0000  
+     Mean   :0.418   Mean   :0.3763   Mean   :0.3239   Mean   :0.2999   Mean   :0.2876   Mean   :0.2435   Mean   :0.2117  
+     3rd Qu.:1.000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:0.0000  
+     Max.   :1.000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+           ne              exp1            exp2             exp3             wage         
+     Min.   :0.0000   Min.   : 2.00   Min.   : 0.040   Min.   : 0.008   Min.   :  0.0043  
+     1st Qu.:0.0000   1st Qu.: 6.00   1st Qu.: 0.360   1st Qu.: 0.216   1st Qu.:  9.6188  
+     Median :0.0000   Median :11.00   Median : 1.210   Median : 1.331   Median : 13.0286  
+     Mean   :0.2571   Mean   :13.35   Mean   : 2.529   Mean   : 5.812   Mean   : 15.5334  
+     3rd Qu.:1.0000   3rd Qu.:19.50   3rd Qu.: 3.803   3rd Qu.: 7.415   3rd Qu.: 17.8125  
+     Max.   :1.0000   Max.   :35.00   Max.   :12.250   Max.   :42.875   Max.   :348.3330  
+     
+## Descriptive Statistics
+
+              average
+    female  0.4179922
+    cg      0.3762712
+    sc      0.3238592
+    hsg     0.2998696
+    mw      0.2876141
+    so      0.2435463
+    we      0.2117340
+    ne      0.2571056
+    exp1   13.3531943
+    exp2    2.5292666
+    exp3    5.8121030
+    wage   15.5333559
+    
+## Predictive Models
+
+We consider two predictive models, basic and flexible.
+
+1. In the basic model, regressors X consist of the female indicator D and other controls W , which include a constant, experience, experience squared, experience cubed, education and regional indicators. The basic model has 10 regressors intotal.
+
+2. In the flexible model, regressors consist of all regressors in the basic model PLUS their two-way interactions or products. An example of a regressor created by a 2-way interaction is the experience variable times the indicator of having a college degree; another example is the indicator of having a high-school diploma times the indicator of working in the ”north-east” region. The flexible model has 33 regressors.
+
+## Performance of Predictive Models
+
+Given that p/n is quite small here, the sample linear regression should approximate the population linear regression quite well.
+Accordingly, we expect the sample R2 to agree with the adjusted R2 and they should both provide a good measure of out-of-sample performance
+
+## Assessing Predictive Performance 1
+
+               p     R^2 R^2 adj MSE adj
+    basic reg 10 0.09549 0.09336   165.7
+    flex reg  33 0.10397 0.09643   165.1
+
+We conclude that the performance of the basic and flexible model are about the same, with the flexible model being just slightly
+adj better (slightly higher R2and lower MSEadj).
+
+## Assessing Predictive Performance 2
+
+              p  R2 test MSE test
+    basic reg 10 0.09298    149.4
+    flex reg  33 0.06625    198.4
+
+Here we report results for one random split of the data in 2 halves, and see that the flexible rule works just slightly better.
+Note that these numbers vary across different data splits, so we can average results over several datasplits.
+By looking at results for several splits, we conclude that the basic and flexible model perform about the same.
